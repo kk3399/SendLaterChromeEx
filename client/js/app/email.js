@@ -1,10 +1,10 @@
-﻿myApp.service('EmailService',function($http, APP_CONSTANTS, Base64) {
+﻿myApp.service('EmailService',function($http, APP_CONSTANTS) {
     this.sendEmail = function(email, callback) {
 
         $.ajax
             ({
               type: "POST",
-              url: "http://localhost:3000/email",
+              url: APP_CONSTANTS.API_URL,
               dataType: 'json',
               async: false,
               data: {'from' : email.from, 'to': email.to, 'subject': email.subject, 
@@ -45,9 +45,9 @@ myApp.controller("EmailController", function ($scope, EmailService, $filter) {
 
     $scope.resetForm = function (){
         $scope.email = []
-        $scope.email.message = "sample subject";
-        $scope.email.from = "krishna.carsearch@gmail.com";
-        $scope.email.to = "damarla.kk@gmail.com";
+        $scope.email.message = "";
+        $scope.email.from = "";
+        $scope.email.to = "";
         $scope.email.subject = $filter('date')(new Date(), 'medium');
         $scope.email.sendAt = $filter('date')(new Date(), 'medium');
     };
@@ -58,9 +58,13 @@ myApp.controller("EmailController", function ($scope, EmailService, $filter) {
     };
 
     $scope.sendEmail = function(){
-        $scope.email.sendAt = (new Date($scope.email.sendAt)).toUTCString();
-        EmailService.sendEmail($scope.email, function(){
-            console.alert("Sent??");
+        var selectedDt = new Date($scope.email.sendAt);
+        var timeDiff = selectedDt.getTime() - (new Date()).getTime();
+        var diffHours = Math.ceil(timeDiff / (1000 * 3600));
+        if (diffHours < 0 || diffHours > 72) return; 
+        $scope.email.sendAt = (selectedDt).toUTCString();
+        EmailService.sendEmail($scope.email, function(message){
+            console.alert(message);
         });
     };
 
