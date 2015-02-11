@@ -14,3 +14,25 @@ body {
   user-select: none;
 }
 
+
+.css-form input.ng-invalid.ng-touched {
+    background-color: #F88379;
+  }
+
+  /*.css-form input.ng-valid.ng-touched {
+    background-color: #1abc9c;
+  }*/
+
+
+.ng-hide {
+  /* this is just another form of hiding an element */
+  display: block!important;
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+}
+
+.alert{padding:8px 35px 8px 14px;margin-bottom:20px;text-shadow:0 1px 0 rgba(255, 255, 255, 0.5);background-color:#fcf8e3;border:1px solid #fbeed5;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;color:#c09853;}
+.alert h4{margin:0;}
+.alert-success{background-color:#dff0d8;border-color:#d6e9c6;color:#468847;}
+.alert-danger,.alert-error{background-color:#f2dede;border-color:#eed3d7;color:#b94a48;}

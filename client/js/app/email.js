@@ -10,7 +10,10 @@
               data: {'from' : email.from, 'to': email.to, 'subject': email.subject, 
                 'text': email.message, 'deliverytime': email.sendAt},
               success: function (){
-                console.log('Thanks'); 
+                callback(true); 
+              },
+              error: function (){
+                callback(false);
               }
             });
         
@@ -43,13 +46,25 @@
 myApp.controller("EmailController", function ($scope, EmailService, $filter) {
 
 
+    // $scope.successTextAlert = "Some content";
+    // $scope.showSuccessAlert = true;
+
+    // $scope.failureTextAlert = "Some content";
+    // $scope.showFailureAlert = true;
+
     $scope.resetForm = function (){
         $scope.email = []
         $scope.email.message = "";
         $scope.email.from = "";
         $scope.email.to = "";
-        $scope.email.subject = $filter('date')(new Date(), 'medium');
+        $scope.email.subject = ""; //$filter('date')(new Date(), 'medium');
         $scope.email.sendAt = $filter('date')(new Date(), 'medium');
+
+        $scope.successTextAlert = "";
+        $scope.showSuccessAlert = false;
+
+        $scope.failureTextAlert = "";
+        $scope.showFailureAlert = false;
     };
 
     $scope.resetForm();
@@ -57,14 +72,46 @@ myApp.controller("EmailController", function ($scope, EmailService, $filter) {
     $scope.formClose = function(){
     };
 
+    $scope.switchBool = function (value) {
+        $scope[value] = !$scope[value];
+    };
+
     $scope.sendEmail = function(){
-        var selectedDt = new Date($scope.email.sendAt);
+        if (!$scope.email.from || !$scope.email.to || !$scope.email.subject)
+        {
+            $scope.showFailureAlert = true;
+            $scope.failureTextAlert = "Please fill in required fields";
+            return;
+        }
+
+
+        var selectedDt = new Date();
+        if ($scope.email.sendAt)
+            selectedDt = new Date($scope.email.sendAt);
         var timeDiff = selectedDt.getTime() - (new Date()).getTime();
+        if (timeDiff > 0 && (timeDiff/100 > 5))
+            $scope.successTextAlert = "Email scheduled!";
+        else
+            $scope.successTextAlert = "Email sent!";
+
         var diffHours = Math.ceil(timeDiff / (1000 * 3600));
         if (diffHours < 0 || diffHours > 72) return; 
         $scope.email.sendAt = (selectedDt).toUTCString();
-        EmailService.sendEmail($scope.email, function(message){
-            console.alert(message);
+        EmailService.sendEmail($scope.email, function(status){
+                if(status)
+                {
+                    $scope.resetForm();
+                    $scope.showSuccessAlert = true;
+                    $scope.showFailureAlert = false;
+                }
+                else
+                {
+                    $scope.showSuccessAlert = false;
+                    $scope.showFailureAlert = true;
+                    $scope.failureTextAlert = "Server error, couldn't send email!"
+
+                }
+            
         });
     };
 

@@ -21,22 +21,37 @@
             <h1>Send Later</h1>
         </header>
 
-        <div ng-controller="EmailController">
-            <div class="form-group">
+        <div ng-controller="EmailController" >
+        <div class="alert alert-success" ng-show="showSuccessAlert"> <button type="button" class="close" data-ng-click="switchBool('showSuccessAlert')">×</button> <strong>{{successTextAlert}}</strong></div>
+
+        <div class="alert alert-danger" ng-show="showFailureAlert"> <button type="button" class="close" data-ng-click="switchBool('showFailureAlert')">×</button> <strong>{{failureTextAlert}}</strong></div>
+            <form name="emailForm" class="css-form" novalidate>
+                <div class="form-group">
                 <label for="FromEmail">From:</label>
-                <input type="email" class="form-control" ng-model="email.from">
+                <input type="email" class="form-control" ng-model="email.from" name="FromEmail" required="">
+                <div ng-show="emailForm.$submitted || emailForm.FromEmail.$touched">
+                    <span ng-show="emailForm.FromEmail.$error.required">Please enter 'from' email.</span>
+                    <span ng-show="emailForm.FromEmail.$error.email">This is not a valid email.</span>
+                </div>
             </div>
             <div class="form-group">
                 <label for="ToEmail">To:</label>
-                <input type="email" class="form-control" ng-model="email.to">
+                <input type="email" class="form-control" ng-model="email.to" name="ToEmail" required>
+                <div ng-show="emailForm.$submitted || emailForm.ToEmail.$touched">
+                    <span ng-show="emailForm.ToEmail.$error.required">Please enter 'to' email.</span>
+                    <span ng-show="emailForm.ToEmail.$error.email">This is not a valid email.</span>
+                </div>
             </div>
             <div class="form-group">
                 <label for="Subject">Subject:</label>
-                <input type="text" class="form-control" ng-model="email.sendAt">
+                <input type="text" class="form-control" ng-model="email.subject" required name="Subject">
+                <div ng-show="emailForm.$submitted || emailForm.Subject.$touched">
+                    <span ng-show="emailForm.Subject.$error.required">Please enter a subject.</span>
+                </div> 
             </div>
             <div class="form-group">
                 <label for="Message">Message:</label>
-                <textarea class="form-control" ng-model="email.message"></textarea>
+                <textarea class="form-control" ng-model="email.message" required></textarea>
             </div>
             <div class="form-group">
                 <label for="PickTime">Pick time:</label>
@@ -51,8 +66,9 @@
                     </ul>
                 </div>
             </div>
-            <button ng-click="sendEmail()" class="btn btn-default">Send</button>
-            <button ng-click="resetForm(); formClose();" class="btn btn-default">Cancel</button>
+            <input type="submit" ng-click="sendEmail()" class="btn btn-default" value="Send"></input>
+            <input type="button" ng-click="resetForm(); formClose();" class="btn btn-default" value="Cancel"></input>
+            </form>
         </div>
     </body>
 </html>
